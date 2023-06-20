@@ -1133,6 +1133,20 @@ class CourseInstance(UrlMixin, models.Model):
         return cache.get(self.config_cache_key, default)
 
 
+class GradeLimits(models.Model):
+    course_instance = models.OneToOneField(CourseInstance,
+        on_delete=models.CASCADE,
+        primary_key=True,
+        verbose_name=_('LABEL_COURSE_INSTANCE'),
+        related_name="grade_limits",
+    )
+    limits = models.JSONField(
+        verbose_name=_('LABEL_GRADE_LIMITS'),
+        blank=True,
+        default=dict,
+    )
+
+
 @receiver(post_delete, sender=CourseInstance)
 def post_instance_delete(instance: CourseInstance, *args, **kwargs) -> None:
     instance.delete_cached_config()

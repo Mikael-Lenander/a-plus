@@ -12,6 +12,20 @@
     {% points_progress total %}
 </div>
 {% endif %}
+<div class="well total-score">
+	<h4>{% translate "EARNED_POINTS" %}</h4>
+	<ul class="list-unstyled">
+		{% for difficulty, point_count in total.points_by_difficulty %}
+		<li>{{ difficulty }}: <strong >{{ point_count }}</strong></li>
+		{% endfor %}
+	</ul>
+	<p>{% translate "GRADE" %}: <strong class="grade-unconfirmed">3</strong></p>
+	{% comment %}
+	<p><small>
+	<a href="https://plus.cs.aalto.fi/o1/2019/w01/ch01/#tehtavapisteet-ja-arvosana">Arvosteluperusteet</a>
+	</small></p>
+	{% endcomment %}
+</div>
 
 {% for entry in categories %}
 {% if entry|is_visible and entry.max_points > 0 %}

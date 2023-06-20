@@ -182,6 +182,8 @@ class CachedContent(ContentMixin, CachedAbstract):
         if total['min_group_size'] > total['max_group_size']:
             total['min_group_size'] = 1
 
+        total['difficulty_levels'] = sorted(total['max_points_by_difficulty'].keys())
+
         return {
             'created': timezone.now(),
             'module_index': module_index,
