@@ -63,14 +63,15 @@ class ParticipantsView(CourseInstanceBaseView):
         participants = ci.all_students.prefetch_tags(ci)
         data = []
         for participant in participants:
+            pseudo = True
             user_id = participant.user.id
             user_tags = CachedStudent(ci, participant.user).data
             user_tags_html = ' '.join(tags[slug].html_label for slug in user_tags['tag_slugs'] if slug in tags)
             data.append({
                 'id': participant.student_id or '',
                 'user_id': user_id,
-                'last_name': participant.user.last_name or '',
-                'first_name': participant.user.first_name or '',
+                'last_name': participant.last_name(pseudo) or '',
+                'first_name': participant.first_name(pseudo) or '',
                 'username': participant.user.username,
                 'email': participant.user.email or '',
                 'external': participant.is_external,

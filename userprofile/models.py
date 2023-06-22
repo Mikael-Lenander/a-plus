@@ -12,6 +12,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework.authtoken.models import Token
 
 from authorization.object_permissions import ObjectPermissions
+from userprofile.pseudonymized import pseudonymize
 
 if TYPE_CHECKING:
     from django.db.models.manager import RelatedManager
@@ -154,6 +155,16 @@ class UserProfile(models.Model):
         if not created:
             token.delete()
             Token.objects.create(user=self.user)
+
+    def first_name(self, pseudonymized=False):
+        return self._format_attr('first_name', pseudonymized)
+
+    def last_name(self, pseudonymized=False):
+        return self._format_attr('last_name', pseudonymized)
+
+    def _format_attr(self, attr, pseudonymized):
+        attr_value = self.user.__getattribute__(attr)
+        return pseudonymize(attr, attr_value) if pseudonymized else attr_value
 
 
 def create_user_profile(sender, instance, created, **kwargs): # pylint: disable=unused-argument
