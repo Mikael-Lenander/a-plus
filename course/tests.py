@@ -192,7 +192,7 @@ class CourseTest(TestCase):
         self.assertTrue(self.current_course_instance.is_teacher(self.user))
         self.assertTrue(self.current_course_instance.is_course_staff(self.user))
         self.assertEqual(1, len(self.current_course_instance.get_course_staff_profiles()))
-        self.assertEqual("testUser", self.current_course_instance.get_course_staff_profiles()[0].shortname)
+        self.assertEqual("testUser", self.current_course_instance.get_course_staff_profiles()[0].shortname()())
 
         self.current_course_instance.clear_assistants()
 
@@ -211,7 +211,7 @@ class CourseTest(TestCase):
     def test_course_instance_submitters(self):
         students = self.current_course_instance.get_submitted_profiles()
         self.assertEqual(1, len(students))
-        self.assertEqual("testUser", students[0].shortname)
+        self.assertEqual("testUser", students[0].shortname())
 
         submission2 = Submission.objects.create(
             exercise=self.base_exercise,
@@ -220,7 +220,7 @@ class CourseTest(TestCase):
 
         students = self.current_course_instance.get_submitted_profiles()
         self.assertEqual(1, len(students))
-        self.assertEqual("testUser", students[0].shortname)
+        self.assertEqual("testUser", students[0].shortname())
 
         submission3 = Submission.objects.create(
             exercise=self.base_exercise,
@@ -229,8 +229,8 @@ class CourseTest(TestCase):
 
         students = self.current_course_instance.get_submitted_profiles()
         self.assertEqual(2, len(students))
-        self.assertEqual("testUser", students[0].shortname)
-        self.assertEqual("grader", students[1].shortname)
+        self.assertEqual("testUser", students[0].shortname())
+        self.assertEqual("grader", students[1].shortname())
 
     def test_course_instance_visibility(self):
         self.assertTrue(self.current_course_instance.is_visible_to())

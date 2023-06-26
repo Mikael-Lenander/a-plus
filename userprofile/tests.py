@@ -155,11 +155,11 @@ class UserProfileTest(TestCase):
             self.superuser_profile.avatar_url
         )
 
-    def test_userprofile_shortname(self):
-        self.assertEqual("Superb S.", self.student_profile.shortname)
-        self.assertEqual("Grumpy G.", self.grader_profile.shortname)
-        self.assertEqual("Tedious T.", self.teacher_profile.shortname)
-        self.assertEqual("Super U.", self.superuser_profile.shortname)
+    def test_userprofile_shortname()(self):
+        self.assertEqual("Superb S.", self.student_profile.shortname())
+        self.assertEqual("Grumpy G.", self.grader_profile.shortname())
+        self.assertEqual("Tedious T.", self.teacher_profile.shortname())
+        self.assertEqual("Super U.", self.superuser_profile.shortname())
 
 #     def test_userprofile_reset_hidden_categories_cache(self):
 #         self.student_profile.reset_hidden_categories_cache()

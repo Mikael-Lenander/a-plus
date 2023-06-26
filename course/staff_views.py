@@ -62,18 +62,18 @@ class ParticipantsView(CourseInstanceBaseView):
 
         participants = ci.all_students.prefetch_tags(ci)
         data = []
+        pseudonymized = self.request.session.get('pseudonymize', False)
         for participant in participants:
-            pseudo = True
             user_id = participant.user.id
             user_tags = CachedStudent(ci, participant.user).data
             user_tags_html = ' '.join(tags[slug].html_label for slug in user_tags['tag_slugs'] if slug in tags)
             data.append({
                 'id': participant.student_id or '',
                 'user_id': user_id,
-                'last_name': participant.last_name(pseudo) or '',
-                'first_name': participant.first_name(pseudo) or '',
-                'username': participant.user.username,
-                'email': participant.user.email or '',
+                'last_name': participant.last_name(pseudonymized) or '',
+                'first_name': participant.first_name(pseudonymized) or '',
+                'username': participant.username(pseudonymized),
+                'email': participant.email(pseudonymized) or '',
                 'external': participant.is_external,
                 'link': link % (user_id,),
                 **user_tags,
@@ -191,6 +191,7 @@ class EnrollStudentsView(CourseInstanceMixin, BaseFormView):
 
         failed_already_enrolled = []
         failed_course_staff = []
+        pseudonymized = self.request.session.get('pseudonymize', False)
         for profile in form.cleaned_data["user_profiles"]:
             if self.instance.is_course_staff(profile.user):
                 # Course staff cannot be demoted into students by enrolling
@@ -206,7 +207,7 @@ class EnrollStudentsView(CourseInstanceMixin, BaseFormView):
                 self.request,
                 format_lazy(
                     _('ENROLLMENTS_FAILED_WARNING_USERS_ALREADY_ENROLLED -- {users}'),
-                    users='; '.join([profile.name_with_student_id for profile in failed_already_enrolled]),
+                    users='; '.join([profile.name_with_student_id(pseudonymized) for profile in failed_already_enrolled]),
                 ),
             )
         if failed_course_staff:
@@ -214,7 +215,7 @@ class EnrollStudentsView(CourseInstanceMixin, BaseFormView):
                 self.request,
                 format_lazy(
                     _('ENROLLMENTS_FAILED_WARNING_COURSE_STAFF -- {users}'),
-                    users='; '.join([profile.user.get_full_name() for profile in failed_course_staff]),
+                    users='; '.join([profile.get_full_name(pseudonymized) for profile in failed_course_staff]),
                 ),
             )
         return super().form_valid(form)

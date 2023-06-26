@@ -154,8 +154,8 @@ class StudentGroup(models.Model):
         return [p for p in members if p != profile]
 
     @classmethod
-    def format_collaborator_names(cls, members, profile):
-        return ", ".join(p.user.get_full_name()
+    def format_collaborator_names(cls, members, profile, pseudonymized=False):
+        return ", ".join(p.get_full_name(pseudonymized)
             for p in cls.filter_collaborators_of(members, profile))
 
     def equals(self, profiles):

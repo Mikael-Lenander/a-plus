@@ -12,7 +12,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework.authtoken.models import Token
 
 from authorization.object_permissions import ObjectPermissions
-from userprofile.pseudonymized import pseudonymize
+from userprofile.pseudonymize import pseudonymize
 
 if TYPE_CHECKING:
     from django.db.models.manager import RelatedManager
@@ -20,6 +20,21 @@ if TYPE_CHECKING:
     from course.models import CourseInstance
     from exercise.models import BaseExercise, Submission, SubmissionDraft
     from external_services.models import LTIService
+
+
+def shortname(first_name: str, last_name: str, username: str):
+    try:
+        return f'{first_name} {last_name[0]}.'
+    except: # pylint: disable=bare-except
+        return username
+
+def name_with_student_id(full_name: str, student_id: str):
+    if student_id:
+        return full_name + ', ' + student_id
+    return full_name
+
+def get_full_name(first_name: str, last_name: str):
+    return f'{first_name} {last_name}'
 
 
 class UserProfileQuerySet(models.QuerySet['UserProfile']):
@@ -121,22 +136,26 @@ class UserProfile(models.Model):
         hash_key = hashlib.md5(self.user.email.encode('utf-8')).hexdigest()
         return "http://www.gravatar.com/avatar/" + hash_key + "?d=identicon"
 
+    def shortname(self, pseudonymized=False):
+        if pseudonymized:
+            return shortname(pseudonymize('first_name', self.user.first_name), pseudonymize('last_name', self.user.last_name), pseudonymize('username', self.user.username))
+        return self._shortname
+
     @cached_property
-    def shortname(self):
+    def _shortname(self):
         """
         A short version of the user's name in form "John D."
         """
-        try:
-            return self.user.first_name + " " + self.user.last_name[0] + "."
-        except: # pylint: disable=bare-except
-            return self.user.username
+        return shortname(self.user.first_name, self.user.last_name, self.user.username)
+
+    def name_with_student_id(self, pseudonymized=False):
+        if pseudonymized:
+            return name_with_student_id(self.get_full_name(pseudonymized=True), self.student_id)
+        return self._name_with_student_id
 
     @cached_property
-    def name_with_student_id(self):
-        name = self.user.get_full_name()
-        if self.student_id:
-            return name + ', ' + self.student_id
-        return name
+    def _name_with_student_id(self):
+        return name_with_student_id(self.get_full_name(pseudonymized=False), self.student_id)
 
     @cached_property
     def is_external(self):
@@ -156,14 +175,31 @@ class UserProfile(models.Model):
             token.delete()
             Token.objects.create(user=self.user)
 
+    def get_full_name(self, pseudonymized=False):
+        if pseudonymized:
+            return get_full_name(pseudonymize('first_name', self.user.first_name), pseudonymize('last_name', self.user.last_name))
+        return get_full_name(self.user.first_name, self.user.last_name)
+
     def first_name(self, pseudonymized=False):
-        return self._format_attr('first_name', pseudonymized)
+        return self._format_user_attr('first_name', pseudonymized)
 
     def last_name(self, pseudonymized=False):
-        return self._format_attr('last_name', pseudonymized)
+        return self._format_user_attr('last_name', pseudonymized)
+
+    def username(self, pseudonymized=False):
+        return self._format_user_attr('username', pseudonymized)
+
+    def email(self, pseudonymized=False):
+        return self._format_user_attr('email', pseudonymized)
 
     def _format_attr(self, attr, pseudonymized):
+        attr_value = self.__getattribute__(attr)
+        return pseudonymize(attr, attr_value) if pseudonymized else attr_value
+
+    def _format_user_attr(self, attr, pseudonymized):
         attr_value = self.user.__getattribute__(attr)
+        if callable(attr_value):
+            attr_value = attr_value()
         return pseudonymize(attr, attr_value) if pseudonymized else attr_value
 
 

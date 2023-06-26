@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='ltiservice',
             name='access_settings',
-            field=models.IntegerField(choices=[(0, 'Anonymous service, no API access'), (5, 'Public service, no API access'), (10, 'Public service, allow API access')], default=0, help_text="Select whether to pass pseudonymised user data to the LTI service.</br>Public services can also enable sharing the user's API token and course API URL in the LTI launch request. This grants the LTI tool API access with the user's privileges."),
+            field=models.IntegerField(choices=[(0, 'Anonymous service, no API access'), (5, 'Public service, no API access'), (10, 'Public service, allow API access')], default=0, help_text="Select whether to pass pseudonymized user data to the LTI service.</br>Public services can also enable sharing the user's API token and course API URL in the LTI launch request. This grants the LTI tool API access with the user's privileges."),
         ),
         migrations.RunPython(forwards_autoselect, backwards_autoselect),
         migrations.RemoveField(

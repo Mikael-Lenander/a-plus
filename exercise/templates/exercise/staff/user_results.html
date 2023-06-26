@@ -5,6 +5,7 @@
 {% load apps %}
 {% load diploma %}
 {% load static %}
+{% load userprofile %}
 
 {% block title %}{{ student.get_full_name }} | {{ block.super }}{% endblock %}
 {% block view_tag %}participants{% endblock %}
@@ -49,15 +50,15 @@
 	</tr>
 	<tr>
 		<td>{{ student.userprofile.student_id }}</td>
-		<td>{{ student.last_name }}</td>
-		<td>{{ student.first_name }}</td>
+		<td>{{ student.last_name|formatted_last_name:pseudonymize }}</td>
+		<td>{{ student.first_name|formatted_first_name:pseudonymize }}</td>
 		<td>
 			{% if student.email %}
 			<a href="mailto:{{ student.email }}">
-				{{ student.email }}
+				{{ student.email|formatted_email:pseudonymize }}
 			</a>
 			{% else %}
-			{{ student.username }}
+			{{ student.username|formatted_username:pseudonymize }}
 			{% endif %}
 		</td>
 	</tr>

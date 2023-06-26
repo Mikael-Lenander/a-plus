@@ -283,7 +283,10 @@ class IncreaseSubmissionMaxView(SubmissionMixin, BaseRedirectView):
         deviation.granter = request.user.userprofile
         deviation.save()
         return self.redirect(self.submission.get_inspect_url())
-
+        profile.user.first_name = pseudonymize('first_name', profile.user.first_name)
+        profile.user.last_name = pseudonymize('last_name', profile.user.last_name)
+        profile.user.email = pseudonymize('email', profile.user.email)
+        profile.user.username = pseudonymize('username', profile.user.username)
 
 class StartRegradeView(ExerciseBaseView, BaseRedirectView):
     access_mode = ACCESS.TEACHER
@@ -423,7 +426,8 @@ class UserResultsView(CourseInstanceBaseView):
             User,
             id=self.kwargs[self.user_kw],
         )
-        self.note('student')
+        self.pseudonymize = self.request.session.get('pseudonymize', False)
+        self.note('student', 'pseudonymize')
 
     def get_common_objects(self):
         profile = self.student.userprofile
