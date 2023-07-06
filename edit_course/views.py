@@ -24,13 +24,13 @@ from lib.viewbase import (
 from aplus.api import api_reverse
 from authorization.permissions import ACCESS
 from course.models import UserTag, UserTagging
-from course.viewbase import CourseInstanceMixin
+from course.viewbase import CourseInstanceMixin, GradeLimitsMixin
 from exercise.cache.content import CachedContent
 from exercise.cache.exercise import invalidate_instance
 from exercise.cache.hierarchy import NoSuchContent
 from exercise.models import LearningObject
 from .course_forms import CourseInstanceForm, CourseIndexForm, \
-    CourseContentForm, CloneInstanceForm, GitmanagerForm, UserTagForm, SelectUsersForm
+    CourseContentForm, CloneInstanceForm, GitmanagerForm, UserTagForm, SelectUsersForm, GradeLimitsForm
 from .managers import CategoryManager, ModuleManager, ExerciseManager
 from .operations.batch import create_submissions
 from .operations.configure import configure_from_url, get_build_log
@@ -58,6 +58,30 @@ class EditInstanceView(CourseInstanceMixin, BaseFormView):
             list(map(lambda x: str(x.user), form.instance.teachers.all())),
             list(map(lambda x: str(x.user), form.instance.assistants.all()))
         ))
+        messages.success(self.request, _('SUCCESS_SAVING_CHANGES'))
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, _('FAILURE_SAVING_CHANGES'))
+        return super().form_invalid(form)
+
+
+class EditGradeLimitsView(GradeLimitsMixin, BaseFormView):
+    access_mode = ACCESS.TEACHER
+    template_name = "edit_course/edit_grade_limits.html"
+    form_class = GradeLimitsForm
+
+    def get_success_url(self) -> str:
+        return self.instance.get_url('course-grade-limits')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["instance"] = self.grade_limits
+        kwargs["course_content"] = self.content
+        return kwargs
+
+    def form_valid(self, form):
+        self.grade_limits = form.save()
         messages.success(self.request, _('SUCCESS_SAVING_CHANGES'))
         return super().form_valid(form)
 

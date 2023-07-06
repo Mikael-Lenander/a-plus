@@ -1,9 +1,11 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import translation
 from django.utils.translation import get_language, get_language_info
+from django.core.exceptions import ObjectDoesNotExist
 
 from authorization.permissions import ACCESS
 from exercise.cache.content import CachedContent
+from exercise.cache.points import CachedPoints
 from lib.helpers import remove_query_param_from_url, update_url_params
 from lib.viewbase import BaseTemplateView
 from userprofile.viewbase import UserProfileMixin
@@ -174,6 +176,21 @@ class CourseInstanceMixin(CourseInstanceBaseMixin, UserProfileMixin):
                     return redirect(exercise.get_absolute_url())
             return redirect(self.instance.get_url('enroll'))
         return super().handle_no_permission()
+
+
+class GradeLimitsMixin(CourseInstanceMixin):
+
+    def get_grade_limits(self):
+        try:
+            return self.instance.grade_limits
+        except ObjectDoesNotExist:
+            return None
+
+    def get_resource_objects(self):
+        super().get_resource_objects()
+        self.grade_limits = self.get_grade_limits()
+        # self.exercise_difficulty_levels = self.content.total()['difficulty_levels']
+        self.note("grade_limits",)# "exercise_difficulty_levels")
 
 
 class CourseInstanceBaseView(CourseInstanceMixin, BaseTemplateView):

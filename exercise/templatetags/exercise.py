@@ -50,6 +50,7 @@ def _prepare_context(context: Context, student: Optional[User] = None) -> Cached
 def _get_toc(context, student=None):
     points = _prepare_context(context, student)
     context = context.flatten()
+    print('total', points.total())
     context.update({
         'modules': points.modules_flatted(),
         'categories': points.categories(),

@@ -1,0 +1,32 @@
+{% extends "edit_course/edit_course_base.html" %}
+{% load i18n %}
+{% load bootstrap %}
+{% load course %}
+{% load editcourse %}
+
+{% block editbreadcrumblist %}
+{{ block.super }}
+<li class="active">{% translate "GRADE_LIMITS" %}</li>
+{% endblock %}
+{% block view_tag %}edit-course,course-grade-limits{% endblock %}
+
+{% block coursecontent %}
+<br />
+<form method="post" class="well">
+	{% csrf_token %}
+	<legend>{% translate "EDIT_GRADE_LIMITS" %}</legend>
+	{% for grade, fields in form.fields_by_grade.items %}
+	<div class="form-group">
+		<label for="{{ field.id_for_label }}">Limits for grade {{ grade }}</label>
+		<hr />
+		{% for field in fields %}
+		{{ field|bootstrap }}
+		{% endfor %}
+	</div>
+    {% endfor %}
+    <button type="submit" class="aplus-button--default aplus-button--md">
+        {% translate "SAVE" %}
+    </button>
+</form>
+{% endblock %}
+

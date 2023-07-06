@@ -1,6 +1,7 @@
 import logging
 from typing import Any
 import urllib.parse
+import json
 
 from aplus_auth.payload import Permission, Permissions
 from aplus_auth.requests import get as aplus_get
@@ -17,10 +18,16 @@ from lib.validators import generate_url_key_validator
 from lib.fields import UsersSearchSelectField
 from lib.widgets import DateTimeLocalInput
 from userprofile.models import UserProfile
+from course.models import GradeLimits
 from course.sis import get_sis_configuration, StudentInfoSystem
+from exercise.cache.content import CachedContent
 
 
 logger = logging.getLogger("aplus.course")
+
+def exclude_keys(dictionay, keys):
+    return {key: value for key, value in dictionay.items() if key not in keys}
+
 
 class FieldsetModelForm(forms.ModelForm):
 
@@ -168,6 +175,72 @@ class CourseInstanceForm(forms.ModelForm):
         self.instance.set_teachers(self.cleaned_data['teachers'])
 
         return super().save(*args, **kwargs)
+
+
+class GradeLimitsForm(forms.ModelForm):
+    class Meta:
+        model = GradeLimits
+        fields = []
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **exclude_keys(kwargs, ('course_content',)))
+        self.grade_limits = {}
+        if kwargs['instance'] is not None:
+            self.grade_limits.update(json.loads(self.instance.limits))
+        self.course_instance = kwargs['course_content'].instance
+        self.exercise_difficulty_levels = kwargs['course_content'].total()['difficulty_levels']
+        self.min_grade = 1
+        self.max_grade = 5
+        for grade in range(self.min_grade, self.max_grade+1):
+            for difficulty_level in self.exercise_difficulty_levels:
+                field_name = self._field_name(grade, difficulty_level)
+                self.fields[field_name] = forms.IntegerField(required=True, min_value=0, label=f'Difficulty level {difficulty_level}')
+                try:
+                    self.initial[field_name] = self.grade_limits[str(grade)][difficulty_level]
+                except KeyError:
+                    self.initial[field_name] = None
+        for field in self.fields.values():
+            field.widget.attrs['class'] = ' input-margin'
+
+    def fields_by_grade(self):
+        fields_by_grade = {}
+        for grade in range(self.min_grade, self.max_grade+1):
+            fields_by_grade[grade] = [self[self._field_name(grade, difficulty_level)] for difficulty_level in self.exercise_difficulty_levels]
+        return fields_by_grade
+
+    def clean(self):
+        super().clean()
+    #     interests = set()
+    #     i = 0
+    #     field_name = 'interest_%s' % (i,)
+    #     while self.cleaned_data.get(field_name):
+    #        interest = self.cleaned_data[field_name]
+    #        if interest in interests:
+    #            self.add_error(field_name, 'Duplicate')
+    #        else:
+    #            interests.add(interest)
+    #        i += 1
+    #        field_name = 'interest_%s' % (i,)
+    #    self.cleaned_data[“interests”] = interests
+
+    def save(self):
+        new_grade_limits = { grade: { difficulty_level: 0 for difficulty_level in self.exercise_difficulty_levels } for grade in range(self.min_grade, self.max_grade+1) }
+        print('initial new_grade_limits: ', new_grade_limits)
+        for grade in range(self.min_grade, self.max_grade+1):
+            for difficulty_level in self.exercise_difficulty_levels:
+                field_name = self._field_name(grade, difficulty_level)
+                new_grade_limits[grade][difficulty_level] = self.cleaned_data[field_name]
+        print('modified new_grade_limits: ', new_grade_limits)
+        new_grade_limits_json = json.dumps(new_grade_limits)
+        self.instance.limits = new_grade_limits_json
+        self.instance.course_instance = self.course_instance
+        value = super().save()
+        print('Grade limits saved: ', json.dumps(json.loads(new_grade_limits_json), sort_keys=True, indent=2))
+        return value
+
+    def _field_name(self, grade, difficulty_level):
+        return f'grade_{grade}_difficulty_{difficulty_level}'
+
 
 
 class CourseIndexForm(forms.ModelForm):
