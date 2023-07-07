@@ -200,7 +200,7 @@ class GradeLimitsForm(forms.ModelForm):
                 except KeyError:
                     self.initial[field_name] = None
         for field in self.fields.values():
-            field.widget.attrs['class'] = ' input-margin'
+            field.widget.attrs['class'] = 'input-margin'
 
     def fields_by_grade(self):
         fields_by_grade = {}
@@ -209,7 +209,7 @@ class GradeLimitsForm(forms.ModelForm):
         return fields_by_grade
 
     def clean(self):
-        super().clean()
+        cleaned_data = super().clean()
     #     interests = set()
     #     i = 0
     #     field_name = 'interest_%s' % (i,)

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-10 14:22+0300\n"
+"POT-Creation-Date: 2023-07-06 20:13+0300\n"
 "PO-Revision-Date: 2021-05-27 14:47+0300\n"
 "Last-Translator: Jimmy Ihalainen <jimmy.ihalainen@aalto.fi>\n"
 "Language-Team: English<>\n"
@@ -657,6 +657,10 @@ msgstr "Language code(s) missing from settings: "
 #: course/models.py
 msgid "COURSE_INSTANCE_ERROR_LANGUAGE_MISSING_FROM_SETTINGS"
 msgstr "Language code missing from settings."
+
+#: course/models.py
+msgid "LABEL_GRADE_LIMITS"
+msgstr "grade limits"
 
 #: course/models.py
 msgid "LABEL_HOOK_URL"
@@ -1331,6 +1335,7 @@ msgstr "Edit group members"
 #: deviations/templates/deviations/override_dl.html
 #: deviations/templates/deviations/override_submissions.html
 #: edit_course/templates/edit_course/edit_content.html
+#: edit_course/templates/edit_course/edit_grade_limits.html
 #: edit_course/templates/edit_course/edit_index.html
 #: edit_course/templates/edit_course/edit_instance.html
 #: edit_course/templates/edit_course/edit_model.html
@@ -1954,6 +1959,7 @@ msgid "USERNAME"
 msgstr "Username"
 
 #: diploma/templates/diploma/list.html
+#: exercise/templates/exercise/_category_points.html
 #: exercise/templates/exercise/_submission_info.html
 #: exercise/templates/exercise/staff/_submissions_table.html
 #: exercise/templates/exercise/staff/_submissions_table_compact.html
@@ -2667,6 +2673,11 @@ msgid "GITMANAGER"
 msgstr "Git manager"
 
 #: edit_course/templates/edit_course/edit_course_base.html
+#: edit_course/templates/edit_course/edit_grade_limits.html
+msgid "GRADE_LIMITS"
+msgstr "Grade limits"
+
+#: edit_course/templates/edit_course/edit_course_base.html
 #: edit_course/templates/edit_course/edit_index.html
 msgid "INDEX"
 msgstr "Front page"
@@ -2690,6 +2701,10 @@ msgstr "This action will update the course instance settings on Git manager."
 #: edit_course/templates/edit_course/edit_gitmanager.html
 msgid "UPDATING_GITMANAGER"
 msgstr "Updating Git manager..."
+
+#: edit_course/templates/edit_course/edit_grade_limits.html
+msgid "EDIT_GRADE_LIMITS"
+msgstr "Edit grade limits"
 
 #: edit_course/templates/edit_course/edit_index.html
 msgid "EDIT_COURSE_INDEX"
@@ -3777,6 +3792,11 @@ msgstr "Pending submissions"
 msgid "TOTAL_POINTS"
 msgstr "Total points"
 
+#: exercise/templates/exercise/_category_points.html
+#: exercise/templates/exercise/_exercise_info.html
+msgid "EARNED_POINTS"
+msgstr "Earned points"
+
 #: exercise/templates/exercise/_duplicate_submission_modal.html
 msgid "DUPLICATE_SUBMISSION_TITLE"
 msgstr "Identical submission"
@@ -3798,10 +3818,6 @@ msgstr "Course front page"
 #: exercise/templates/exercise/_exercise_info.html
 msgid "CURRENT_STATUS"
 msgstr "Current status"
-
-#: exercise/templates/exercise/_exercise_info.html
-msgid "EARNED_POINTS"
-msgstr "Earned points"
 
 #: exercise/templates/exercise/_exercise_info.html
 msgid "LATE"

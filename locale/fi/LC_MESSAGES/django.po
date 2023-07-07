@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-10 14:22+0300\n"
+"POT-Creation-Date: 2023-07-06 20:13+0300\n"
 "PO-Revision-Date: 2019-08-14 12:16+0200\n"
 "Last-Translator: Jimmy Ihalainen <jimmy.ihalainen@aalto.fi>\n"
 "Language-Team: Finnish <>\n"
@@ -662,6 +662,12 @@ msgstr "Palvelun asetuksista puuttuva(t) kielikoodi(t):"
 #: course/models.py
 msgid "COURSE_INSTANCE_ERROR_LANGUAGE_MISSING_FROM_SETTINGS"
 msgstr "Kielikoodi puuttuu palvelun asetuksista."
+
+#: course/models.py
+#, fuzzy
+#| msgid "LABEL_GRADE"
+msgid "LABEL_GRADE_LIMITS"
+msgstr "arvosana"
 
 #: course/models.py
 msgid "LABEL_HOOK_URL"
@@ -1339,6 +1345,7 @@ msgstr "Muokkaa ryhmän jäseniä"
 #: deviations/templates/deviations/override_dl.html
 #: deviations/templates/deviations/override_submissions.html
 #: edit_course/templates/edit_course/edit_content.html
+#: edit_course/templates/edit_course/edit_grade_limits.html
 #: edit_course/templates/edit_course/edit_index.html
 #: edit_course/templates/edit_course/edit_instance.html
 #: edit_course/templates/edit_course/edit_model.html
@@ -1964,6 +1971,7 @@ msgid "USERNAME"
 msgstr "Käyttäjätunnus"
 
 #: diploma/templates/diploma/list.html
+#: exercise/templates/exercise/_category_points.html
 #: exercise/templates/exercise/_submission_info.html
 #: exercise/templates/exercise/staff/_submissions_table.html
 #: exercise/templates/exercise/staff/_submissions_table_compact.html
@@ -2681,6 +2689,13 @@ msgid "GITMANAGER"
 msgstr "Git manager"
 
 #: edit_course/templates/edit_course/edit_course_base.html
+#: edit_course/templates/edit_course/edit_grade_limits.html
+#, fuzzy
+#| msgid "LABEL_LIMIT"
+msgid "GRADE_LIMITS"
+msgstr "raja"
+
+#: edit_course/templates/edit_course/edit_course_base.html
 #: edit_course/templates/edit_course/edit_index.html
 msgid "INDEX"
 msgstr "Etusivu"
@@ -2704,6 +2719,10 @@ msgstr "Tämä toiminto päivittää kurssikerran asetuksia Git managerissa."
 #: edit_course/templates/edit_course/edit_gitmanager.html
 msgid "UPDATING_GITMANAGER"
 msgstr "Päivitetään Git manageria..."
+
+#: edit_course/templates/edit_course/edit_grade_limits.html
+msgid "EDIT_GRADE_LIMITS"
+msgstr ""
 
 #: edit_course/templates/edit_course/edit_index.html
 msgid "EDIT_COURSE_INDEX"
@@ -3784,6 +3803,11 @@ msgstr "Keskeneräiset palautukset"
 msgid "TOTAL_POINTS"
 msgstr "Yhteispisteet"
 
+#: exercise/templates/exercise/_category_points.html
+#: exercise/templates/exercise/_exercise_info.html
+msgid "EARNED_POINTS"
+msgstr "Ansaitut pisteet"
+
 #: exercise/templates/exercise/_duplicate_submission_modal.html
 msgid "DUPLICATE_SUBMISSION_TITLE"
 msgstr "Identtinen palautus"
@@ -3805,10 +3829,6 @@ msgstr "Kurssin etusivu"
 #: exercise/templates/exercise/_exercise_info.html
 msgid "CURRENT_STATUS"
 msgstr "Tila tällä hetkellä"
-
-#: exercise/templates/exercise/_exercise_info.html
-msgid "EARNED_POINTS"
-msgstr "Ansaitut pisteet"
 
 #: exercise/templates/exercise/_exercise_info.html
 msgid "LATE"
