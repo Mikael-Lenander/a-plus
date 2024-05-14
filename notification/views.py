@@ -2,6 +2,7 @@ from django.http import Http404, HttpResponse
 
 from course.viewbase import CourseInstanceMixin
 from lib.viewbase import BaseRedirectView
+from lib.remote_page import request_for_response
 from .models import Notification
 
 
@@ -21,6 +22,8 @@ class NotificationRedirectView(CourseInstanceMixin, BaseRedirectView):
     def get(self, request, *args, **kwargs):
         self.notification.seen = True
         self.notification.save()
+        submission = self.notification.submission
+        submission.exercise.grade(submission)
         if self.notification.submission:
             return self.redirect(
                 self.notification.submission.get_url('submission-plain')

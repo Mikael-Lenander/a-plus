@@ -172,6 +172,7 @@ class SubmissionGraderSerializer(AplusModelSerializerBase):
     )
     submission = SubmissionInGraderSerializer(source='*')
     exercise = ExerciseBriefSerializer()
+    feedback_response_seen = serializers.SerializerMethodField()
 
     class Meta(AplusSerializerMeta):
         model = Submission
@@ -181,7 +182,11 @@ class SubmissionGraderSerializer(AplusModelSerializerBase):
             'exercise',
             'grading_data',
             'is_graded',
+            'feedback_response_seen'
         )
+
+    def get_feedback_response_seen(self, obj):
+        return not obj.notifications.filter(seen=False).exists() and obj.notifications.count() > 0
 
 
 class TreeExerciseSerializer(serializers.Serializer):
